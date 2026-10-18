@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+import queue
 import re
 import shutil
 import subprocess
@@ -20,6 +21,8 @@ from datetime import date
 from pathlib import Path
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
+
+import cap_nhat_van_ban as vb
 
 GOC = Path(__file__).resolve().parent
 CH = json.loads((GOC / "cau_hinh.json").read_text(encoding="utf-8"))
@@ -66,10 +69,13 @@ class App(tk.Tk):
         self.minsize(900, 600)
         self.dang_sua: tuple[str, str] | None = None     # (chuyên mục, slug) của bài đang mở
         self.thay_doi = False
+        self.hang: queue.Queue = queue.Queue()          # việc từ luồng chạy ngầm gửi về giao diện
+        self.after(100, self.xu_ly_hang)
 
         trai = ttk.Frame(self, padding=8)
         trai.pack(side="left", fill="y")
         ttk.Button(trai, text="+ Bài mới", command=self.bai_moi).pack(fill="x")
+        ttk.Button(trai, text="Văn bản mới (Công báo) → soạn bài", command=lambda: CuaSoVanBan(self)).pack(fill="x", pady=(4, 0))
         ttk.Label(trai, text="Bài đã có (bấm để sửa):").pack(anchor="w", pady=(10, 2))
         self.cay = ttk.Treeview(trai, show="tree", height=30)
         self.cay.column("#0", width=330)
@@ -285,6 +291,8 @@ class App(tk.Tk):
             loi.append("Ngày phải dạng năm-tháng-ngày, vd 2026-10-20.")
         if not b["md"]:
             loi.append("Nội dung đang trống.")
+        if "BẢN NHÁP" in b["md"]:
+            loi.append("Bài còn dòng <!-- BẢN NHÁP … -->: đọc lại, đối chiếu toàn văn, sửa xong thì xóa dòng đó rồi Lưu.")
         if b["md"].startswith("@@@") or "\n@@@ " in b["md"]:
             loi.append("Nội dung không được có dòng bắt đầu bằng @@@.")
         if loi:
@@ -351,7 +359,7 @@ class App(tk.Tk):
     def dung(self) -> bool:
         ma, ra = self.chay([sys.executable, "build.py"])
         if ma:
-            self.after(0, lambda: messagebox.showerror("Lỗi dựng trang", ra[-1500:]))
+            self.goi(lambda: messagebox.showerror("Lỗi dựng trang", ra[-1500:]))
         return ma == 0
 
     def xem_thu(self) -> None:
@@ -363,7 +371,7 @@ class App(tk.Tk):
             if self.dung():
                 trang = GOC / "docs" / ("bai-viet/" + self.dang_sua[1] + ".html" if self.dang_sua else "kien-thuc.html")
                 webbrowser.open(trang.as_uri())
-                self.after(0, lambda: self.bao("Đã mở bản xem thử trên máy (chưa đăng lên web)."))
+                self.goi(lambda: self.bao("Đã mở bản xem thử trên máy (chưa đăng lên web)."))
         threading.Thread(target=lam, daemon=True).start()
 
     def dang(self) -> None:
@@ -379,25 +387,231 @@ class App(tk.Tk):
             self.chay(["git", "add", "-A"])
             ma, ra = self.chay(["git", "commit", "-m", f"Cap nhat bai viet {date.today():%d/%m/%Y}"])
             if ma and "nothing to commit" in ra:
-                self.after(0, lambda: self.bao("Không có gì mới để đăng."))
+                self.goi(lambda: self.bao("Không có gì mới để đăng."))
                 return
             ma, ra = self.chay(["git", "push"])
             if ma:
-                self.after(0, lambda: messagebox.showerror("Đăng chưa được", "Chưa đưa lên GitHub được (kiểm tra mạng, đăng nhập GitHub):\n\n" + ra[-1500:]))
-                self.after(0, lambda: self.bao("Đã lưu trên máy nhưng CHƯA lên web."))
+                self.goi(lambda: messagebox.showerror("Đăng chưa được", "Chưa đưa lên GitHub được (kiểm tra mạng, đăng nhập GitHub):\n\n" + ra[-1500:]))
+                self.goi(lambda: self.bao("Đã lưu trên máy nhưng CHƯA lên web."))
                 return
             url = CH.get("base_url", "")
             dia_chi = f"{url}/bai-viet/{self.dang_sua[1]}.html" if self.dang_sua else f"{url}/kien-thuc.html"
-            self.after(0, lambda: self.bao(f"Đã đăng. Trang cập nhật sau khoảng 1 phút: {dia_chi}"))
-            self.after(0, lambda: messagebox.showinfo("Đã đăng", f"Đã đưa lên web. Khoảng 1 phút sau trang sẽ cập nhật:\n{dia_chi}"))
+            self.goi(lambda: self.bao(f"Đã đăng. Trang cập nhật sau khoảng 1 phút: {dia_chi}"))
+            self.goi(lambda: messagebox.showinfo("Đã đăng", f"Đã đưa lên web. Khoảng 1 phút sau trang sẽ cập nhật:\n{dia_chi}"))
         threading.Thread(target=lam, daemon=True).start()
 
     def bao(self, s: str) -> None:
         self.trang_thai.config(text=s)
 
+    def goi(self, ham) -> None:
+        """Gọi từ luồng chạy ngầm: ham() sẽ chạy trên luồng giao diện."""
+        self.hang.put(ham)
+
+    def xu_ly_hang(self) -> None:
+        while not self.hang.empty():
+            self.hang.get()()
+        self.after(100, self.xu_ly_hang)
+
     def thoat(self) -> None:
         if self.hoi_luu():
             self.destroy()
+
+    def nhan_ban_nhap(self, cm: str, b: dict) -> None:
+        """Đưa bản nháp soạn từ văn bản mới vào ô soạn thảo (chưa lưu)."""
+        if not self.hoi_luu():
+            return
+        b = dict(b, date=date.today().isoformat(), slug=tao_slug(b.get("title", "")))
+        self.dien(cm, b)
+        self.dang_sua = None
+        self.thay_doi = True
+        self.cay.selection_remove(self.cay.selection())
+        self.lift()
+        self.bao("BẢN NHÁP từ văn bản mới: đọc kỹ, sửa, đối chiếu toàn văn, xóa dòng <!-- BẢN NHÁP … --> rồi mới Lưu, Đăng.")
+
+
+class CuaSoVanBan(tk.Toplevel):
+    """Danh sách văn bản mới trên Công báo Chính phủ, xem toàn văn, soạn bản nháp bài viết."""
+
+    def __init__(self, app: App) -> None:
+        super().__init__(app)
+        self.app = app
+        self.title("Văn bản pháp luật mới – Công báo Chính phủ")
+        self.geometry("1100x700")
+        self.ds: list[dict] = []
+        self.ct: dict[str, dict] = {}            # url -> chi tiết đã tải
+        self.tv: dict[str, str] = {}             # url -> toàn văn
+
+        tren = ttk.Frame(self, padding=6)
+        tren.pack(fill="x")
+        ttk.Button(tren, text="Quét văn bản mới", command=self.quet).pack(side="left")
+        self.loc = tk.BooleanVar(value=True)
+        self.an = tk.BooleanVar(value=False)
+        ttk.Checkbutton(tren, text="Chỉ văn bản kế toán, thuế, lao động", variable=self.loc, command=self.hien).pack(side="left", padx=8)
+        ttk.Checkbutton(tren, text="Ẩn văn bản đã xem", variable=self.an, command=self.hien).pack(side="left")
+        self.nut_khoa = ttk.Button(tren, text="", command=self.dat_khoa)
+        self.nut_khoa.pack(side="right")
+        self.cap_nhat_nut_khoa()
+
+        khung = ttk.PanedWindow(self, orient="vertical")
+        khung.pack(fill="both", expand=True, padx=6)
+        cot = ("tt", "so", "nguon", "tieu")
+        self.bang = ttk.Treeview(khung, columns=cot, show="headings", height=12)
+        for c, t, w in zip(cot, ("Trạng thái", "Số hiệu", "Nguồn", "Tên văn bản"), (90, 150, 110, 700)):
+            self.bang.heading(c, text=t)
+            self.bang.column(c, width=w, stretch=(c == "tieu"))
+        self.bang.tag_configure("moi", font=("Segoe UI", 9, "bold"))
+        self.bang.bind("<<TreeviewSelect>>", self.chon)
+        self.bang.bind("<Double-1>", lambda e: self.mo_goc())
+        khung.add(self.bang, weight=1)
+        self.xem = tk.Text(khung, wrap="word", font=("Segoe UI", 10), height=14)
+        khung.add(self.xem, weight=1)
+
+        duoi = ttk.Frame(self, padding=6)
+        duoi.pack(fill="x")
+        ttk.Button(duoi, text="Mở trên Công báo", command=self.mo_goc).pack(side="left")
+        ttk.Button(duoi, text="Xem toàn văn", command=self.toan_van).pack(side="left", padx=4)
+        ttk.Button(duoi, text="Soạn bản nháp bài viết", command=self.soan).pack(side="left")
+        ttk.Button(duoi, text="Đánh dấu đã xem", command=self.danh_dau).pack(side="left", padx=4)
+        self.tt = ttk.Label(duoi, text="Bấm 'Quét văn bản mới'. Nguồn: congbao.chinhphu.vn (văn bản chính thức).", foreground="#1d3f73")
+        self.tt.pack(side="left", padx=10)
+        self.quet()
+
+    def bao(self, s: str) -> None:
+        self.app.goi(lambda: self.tt.config(text=s))
+
+    def chay_nen(self, viec, xong, loi="Lỗi") -> None:
+        def lam():
+            try:
+                kq = viec()
+            except Exception as e:
+                tin = str(e)[:800] or type(e).__name__            # e bị xóa khi ra khỏi khối except
+                self.app.goi(lambda: (messagebox.showerror(loi, tin, parent=self), self.bao(loi)))
+                return
+            self.app.goi(lambda: xong(kq))
+        threading.Thread(target=lam, daemon=True).start()
+
+    # ---------- danh sách
+    def quet(self) -> None:
+        self.bao("Đang quét Công báo…")
+        def xong(ds):
+            self.ds = ds
+            self.hien()
+            self.bao(f"Đã quét {len(ds)} văn bản. Bấm một dòng để xem thông tin.")
+        self.chay_nen(lambda: vb.quet(self.bao), xong, "Không quét được")
+
+    def hien(self) -> None:
+        xem = vb.da_xem()
+        self.bang.delete(*self.bang.get_children())
+        for x in self.ds:
+            if self.loc.get() and not vb.lien_quan(x["tieu_de"]):
+                continue
+            if self.an.get() and x["url"] in xem:
+                continue
+            tt = "Đã có bài" if vb.da_co_bai(x["so_hieu"]) else ("Đã xem" if x["url"] in xem else "MỚI")
+            self.bang.insert("", "end", iid=x["url"], values=(tt, x["so_hieu"], x["nguon"], x["tieu_de"]),
+                             tags=("moi",) if tt == "MỚI" else ())
+
+    def dang_chon(self) -> str | None:
+        s = self.bang.selection()
+        if not s:
+            messagebox.showinfo("Chọn văn bản", "Bấm chọn một văn bản trong danh sách.", parent=self)
+            return None
+        return s[0]
+
+    def ghi_xem(self, s: str) -> None:
+        self.xem.delete("1.0", "end")
+        self.xem.insert("1.0", s)
+
+    def chon(self, _=None) -> None:
+        s = self.bang.selection()
+        if not s:
+            return
+        url = s[0]
+        if url in self.ct:
+            self.hien_ct(self.ct[url])
+            return
+        self.ghi_xem("Đang tải thông tin văn bản…")
+        def xong(ct):
+            self.ct[url] = ct
+            if self.bang.selection() and self.bang.selection()[0] == url:
+                self.hien_ct(ct)
+        self.chay_nen(lambda: vb.chi_tiet(url), xong, "Không tải được văn bản")
+
+    def hien_ct(self, ct: dict) -> None:
+        self.ghi_xem(f"{ct['loai']} {ct['so_hieu']}\n{ct['trich_yeu'] or ct['tieu_de']}\n\n"
+                     f"Ngày ban hành: {ct['ngay_ban_hanh']}    Ngày hiệu lực: {ct['ngay_hieu_luc']}    Người ký: {ct['nguoi_ky']}\n"
+                     f"Công báo: {ct['url']}\n"
+                     + ("" if ct["word"] else "\n(Văn bản không có file Word: bản nháp chỉ có thông tin chung.)"))
+
+    def mo_goc(self) -> None:
+        url = self.dang_chon()
+        if url:
+            webbrowser.open(url)
+
+    def danh_dau(self) -> None:
+        url = self.dang_chon()
+        if url:
+            vb.danh_dau_xem([url])
+            self.hien()
+
+    def lay_ct_tv(self, url: str) -> tuple[dict, str]:
+        ct = self.ct.get(url) or vb.chi_tiet(url)
+        self.ct[url] = ct
+        if url not in self.tv:
+            self.tv[url] = vb.chu_word(ct["word"]) if ct["word"] else ""
+        return ct, self.tv[url]
+
+    def toan_van(self) -> None:
+        url = self.dang_chon()
+        if not url:
+            return
+        self.ghi_xem("Đang tải toàn văn…")
+        def xong(kq):
+            ct, tv = kq
+            self.ghi_xem(tv or "Văn bản không có file Word. Bấm 'Mở trên Công báo' để xem bản PDF.")
+            self.bao(f"Toàn văn {ct['so_hieu']}: {len(tv):,} ký tự.")
+        self.chay_nen(lambda: self.lay_ct_tv(url), xong, "Không tải được toàn văn")
+
+    # ---------- soạn bài
+    def soan(self) -> None:
+        url = self.dang_chon()
+        if not url:
+            return
+        dung_ai = bool(vb.khoa_api())
+        self.bao("Đang tải văn bản và soạn bản nháp" + (" bằng Claude (khoảng 1–2 phút)…" if dung_ai else "…"))
+
+        def viec():
+            ct, tv = self.lay_ct_tv(url)
+            cm = vb.doan_chuyen_muc(ct["tieu_de"] + " " + ct["trich_yeu"] + " " + tv[:4000])
+            ten_cm = next(c["ten"] for c in CM if c["slug"] == cm)
+            if dung_ai and tv:
+                return cm, vb.soan_ai(ct, tv, ten_cm), "Claude"
+            return cm, vb.khung_nhap(ct, tv), "khung"
+
+        def xong(kq):
+            cm, bai, cach = kq
+            vb.danh_dau_xem([url])
+            self.hien()
+            self.app.nhan_ban_nhap(cm, bai)
+            self.bao("Đã đưa bản nháp sang cửa sổ soạn bài" + (" (Claude soạn)." if cach == "Claude" else " (khung để tự viết)."))
+        self.chay_nen(viec, xong, "Không soạn được bản nháp")
+
+    def cap_nhat_nut_khoa(self) -> None:
+        self.nut_khoa.config(text="Soạn bằng Claude: ĐANG BẬT" if vb.khoa_api() else "Bật soạn bằng Claude (nhập khóa API)…")
+
+    def dat_khoa(self) -> None:
+        from tkinter import simpledialog
+        k = simpledialog.askstring("Khóa Claude API", "Dán khóa API (bắt đầu bằng sk-ant-…).\n"
+                                   "Khóa chỉ lưu trên máy này (khoa_api.txt), không đưa lên web.\nĐể trống rồi OK để tắt.",
+                                   parent=self, show="*")
+        if k is None:
+            return
+        f = GOC / "khoa_api.txt"
+        if k.strip():
+            f.write_text(k.strip(), encoding="utf-8")
+        elif f.exists():
+            f.unlink()
+        self.cap_nhat_nut_khoa()
 
 
 if __name__ == "__main__":
