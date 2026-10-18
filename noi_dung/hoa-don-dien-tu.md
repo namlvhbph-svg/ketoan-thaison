@@ -1,3 +1,23 @@
+@@@ {"slug": "142-2026-tt-btc-sua-doi-bo-sung-mot-so-dieu-cua-cac-thong-tu-quy-dinh-thu-tuc-ha", "title": "142/2026/TT-BTC: Sửa đổi, bổ sung một số điều của các Thông tư quy định thủ tục hải quan đối với hàng hóa x", "summary": "Sửa đổi, bổ sung một số điều của các Thông tư quy định thủ tục hải quan đối với hàng hóa xuất khẩu, nhập khẩu, quá cảnh gửi qua dịch vụ bưu chính của doanh nghiệp được chỉ định, dịch vụ chuyển phát nh", "date": "2026-10-19", "can_cu": ["Thông tư 142/2026/TT-BTC ngày 29/09/2026 (hiệu lực 16/11/2026)"]}
+**## Văn bản mới: 142/2026/TT-BTC**
+
+###**Thông tư 142/2026/TT-BTC** Sửa đổi, bổ sung một số điều của các Thông tư quy định thủ tục hải quan đối với hàng hóa xuất khẩu, nhập khẩu, quá cảnh gửi qua dịch vụ bưu chính của doanh nghiệp được chỉ định, dịch vụ chuyển phát nhanh quốc tế.
+
+|---|---|
+| Ngày ban hành | 29/09/2026 |
+| Ngày hiệu lực | 16/11/2026 |
+| Người ký | NGUYỄN ĐỨC CHI |
+
+Toàn văn: [Công báo Chính phủ](https://congbao.chinhphu.vn/van-ban/thong-tu-so-142-2026-tt-btc-470611.htm)
+
+### Điều 4. Điều khoản thi hành
+### 1. Thông tư này có hiệu lực kể từ ngày 16 tháng 11 năm 2026.
+### 2. Cục Hải quan có trách nhiệm xây dựng Hệ thống xử lý dữ liệu điện tử hải quan, ban hành định dạng thông điệp dữ liệu để đáp ứng các yêu cầu quy định tại Thông tư này.
+### 3. Trường hợp theo Điều ước quốc tế mà Việt Nam là thành viên có quy định về thời gian giải phóng hàng, Cục Hải quan có trách nhiệm tổ chức thực hiện đảm bảo theo đúng điều ước quốc tế đó.
+### 4. Trường hợp chức năng, nhiệm vụ, tên gọi của các cơ quan, tổ chức được giao tại Thông tư này thay đổi thì thực hiện theo chức năng, nhiệm vụ, tên gọi mới của các cơ quan, tổ chức đó.
+### 5. Trong quá trình thực hiện, nếu các văn bản liên quan viện dẫn tại Thông tư này được sửa đổi, bổ sung hoặc thay thế thì thực hiện theo văn bản mới được sửa đổi, bổ sung hoặc thay thế.
+### 6. Trường hợp có vướng mắc phát sinh trong quá trình thực hiện, đề nghị các tổ chức, cá nhân có liên quan phản ánh về Bộ Tài chính (qua Cục Hải quan) để tổng hợp và hướng dẫn xử lý./.
+
 @@@ {"slug": "thoi-diem-lap-hoa-don", "title": "Thời điểm lập hóa đơn điện tử: bán hàng, dịch vụ, xây dựng", "summary": "Lập hóa đơn khi nào cho từng loại giao dịch, trường hợp thu tiền trước, giao hàng nhiều lần và rủi ro lập sai thời điểm.", "date": "2026-10-19", "can_cu": ["Nghị định 123/2020/NĐ-CP, Điều 9 (sửa đổi bởi Nghị định 70/2025/NĐ-CP)", "Thông tư 32/2025/TT-BTC hướng dẫn hóa đơn, chứng từ"]}
 ## Nguyên tắc chung
 
