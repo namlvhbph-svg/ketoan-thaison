@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kế Toán Thái Sơn - Thi trắc nghiệm kế toán, thuế trực tuyến với hàng trăm câu hỏi có giải thích chi tiết">
+    <title>Kế Toán Thái Sơn - Thi Trắc Nghiệm Kế Toán</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Particle Background -->
+    <canvas id="particles"></canvas>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo" id="nav-logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/>
+                        <path d="M8 7h8M8 11h8M8 15h5"/>
+                    </svg>
+                </div>
+                <span>KẾ TOÁN <strong>THÁI SƠN</strong></span>
+            </a>
+            <div class="nav-links">
+                <a href="../index.html" style="color:inherit;opacity:.75;text-decoration:none;font-weight:600;margin-right:6px">← Bài viết kế toán</a>
+                <a href="#home" class="nav-link active" data-section="home">Trang chủ</a>
+                <a href="#quiz" class="nav-link" data-section="quiz">Thi trắc nghiệm</a>
+                <a href="#knowledge" class="nav-link" data-section="knowledge">Kiến thức</a>
+                <a href="#stats" class="nav-link" data-section="stats">Thống kê</a>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#home" class="mobile-link" data-section="home">Trang chủ</a>
+        <a href="#quiz" class="mobile-link" data-section="quiz">Thi trắc nghiệm</a>
+        <a href="#knowledge" class="mobile-link" data-section="knowledge">Kiến thức</a>
+        <a href="#stats" class="mobile-link" data-section="stats">Thống kê</a>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- HOME SECTION -->
+        <section class="section section-home active" id="home">
+            <div class="hero">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-dot"></span>
+                        Kế Toán Thái Sơn · Luyện thi trắc nghiệm
+                    </div>
+                    <h1 class="hero-title">
+                        Chinh phục <span class="gradient-text">Kế Toán</span><br>
+                        cùng trắc nghiệm thông minh
+                    </h1>
+                    <p class="hero-desc">
+                        Luyện thi trắc nghiệm kế toán với hệ thống câu hỏi phong phú, bao gồm nguyên lý kế toán, kế toán tài chính, thuế, và nhiều chủ đề khác.
+                    </p>
+                    <div class="hero-actions">
+                        <button class="btn btn-primary btn-glow" id="startQuizBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                            Bắt đầu thi ngay
+                        </button>
+                        <button class="btn btn-outline" id="viewKnowledgeBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                            </svg>
+                            Xem kiến thức
+                        </button>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" id="heroQuestionCount" data-count="200">0</span>+
+                            <span class="stat-label">Câu hỏi</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="heroTopicCount" data-count="8">0</span>
+                            <span class="stat-label">Chủ đề</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="100">0</span>%
+                            <span class="stat-label">Miễn phí</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="floating-card card-1">
+                        <div class="card-icon card-icon-green">✓</div>
+                        <div>
+                            <div class="card-title">Nợ - Có</div>
+                            <div class="card-sub">Nguyên lý kế toán</div>
+                        </div>
+                    </div>
+                    <div class="floating-card card-2">
+                        <div class="card-icon card-icon-blue">📊</div>
+                        <div>
+                            <div class="card-title">Báo cáo tài chính</div>
+                            <div class="card-sub">4 loại báo cáo</div>
+                        </div>
+                    </div>
+                    <div class="floating-card card-3">
+                        <div class="card-icon card-icon-purple">💰</div>
+                        <div>
+                            <div class="card-title">Thuế GTGT</div>
+                            <div class="card-sub">Luật thuế mới nhất</div>
+                        </div>
+                    </div>
+                    <div class="hero-circle"></div>
+                    <div class="hero-circle hero-circle-2"></div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="features-grid">
+                <div class="feature-card" data-aos="fade-up">
+                    <div class="feature-icon feature-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                        </svg>
+                    </div>
+                    <h3>Trắc nghiệm đa dạng</h3>
+                    <p>Hệ thống câu hỏi phong phú từ cơ bản đến nâng cao, bao phủ mọi chủ đề kế toán.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-delay="100">
+                    <div class="feature-icon feature-icon-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>Tính giờ thông minh</h3>
+                    <p>Đếm ngược thời gian cho mỗi câu hỏi, rèn luyện tốc độ làm bài thi thực tế.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-delay="200">
+                    <div class="feature-icon feature-icon-3">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <h3>Thống kê chi tiết</h3>
+                    <p>Theo dõi tiến trình học tập, phân tích điểm mạnh yếu từng chủ đề.</p>
+                </div>
+                <div class="feature-card" data-aos="fade-up" data-delay="300">
+                    <div class="feature-icon feature-icon-4">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </div>
+                    <h3>Giải thích đáp án</h3>
+                    <p>Mỗi câu hỏi đều có giải thích chi tiết giúp hiểu sâu kiến thức kế toán.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- QUIZ SECTION -->
+        <section class="section section-quiz" id="quiz">
+            <!-- Quiz Category Selection -->
+            <div class="quiz-categories" id="quizCategories">
+                <div class="section-header">
+                    <h2 class="section-title">Chọn <span class="gradient-text">chủ đề</span> thi</h2>
+                    <p class="section-desc">Chọn chủ đề bạn muốn luyện thi hoặc thi tổng hợp tất cả các chủ đề</p>
+                </div>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+
+            <!-- Quiz Settings -->
+            <div class="quiz-settings hidden" id="quizSettings">
+                <div class="settings-card">
+                    <button class="back-btn" id="backToCategories">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Quay lại
+                    </button>
+                    <h2 class="settings-title" id="selectedCategoryTitle">Cài đặt bài thi</h2>
+                    <div class="settings-group">
+                        <label class="settings-label">Hình thức</label>
+                        <div class="settings-options">
+                            <button class="setting-btn active" data-mode="practice">Luyện tập</button>
+                            <button class="setting-btn" data-mode="exam">Thi thử</button>
+                        </div>
+                        <p class="settings-hint" id="modeHint">Xem đáp án và giải thích ngay sau mỗi câu.</p>
+                    </div>
+                    <div class="settings-group">
+                        <label class="settings-label">Số câu hỏi</label>
+                        <div class="settings-options">
+                            <button class="setting-btn active" data-count="10">10 câu</button>
+                            <button class="setting-btn" data-count="20">20 câu</button>
+                            <button class="setting-btn" data-count="30">30 câu</button>
+                            <button class="setting-btn" data-count="50">50 câu</button>
+                        </div>
+                    </div>
+                    <div class="settings-group hidden" id="examTimeGroup">
+                        <label class="settings-label">Thời gian làm bài</label>
+                        <div class="settings-options">
+                            <button class="setting-btn" data-exam-time="15">15 phút</button>
+                            <button class="setting-btn active" data-exam-time="30">30 phút</button>
+                            <button class="setting-btn" data-exam-time="45">45 phút</button>
+                            <button class="setting-btn" data-exam-time="60">60 phút</button>
+                        </div>
+                    </div>
+                    <div class="settings-group" id="practiceTimeGroup">
+                        <label class="settings-label">Thời gian mỗi câu</label>
+                        <div class="settings-options">
+                            <button class="setting-btn" data-time="15">15 giây</button>
+                            <button class="setting-btn active" data-time="30">30 giây</button>
+                            <button class="setting-btn" data-time="60">60 giây</button>
+                            <button class="setting-btn" data-time="0">Không giới hạn</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary btn-lg btn-glow" id="startExamBtn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"/>
+                        </svg>
+                        Bắt đầu làm bài
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Active -->
+            <div class="quiz-active hidden" id="quizActive">
+                <div class="quiz-header">
+                    <div class="quiz-progress-info">
+                        <span class="quiz-category-label" id="quizCategoryLabel"></span>
+                        <span class="quiz-counter">Câu <span id="currentQ">1</span>/<span id="totalQ">10</span></span>
+                    </div>
+                    <div class="quiz-progress-bar">
+                        <div class="quiz-progress-fill" id="quizProgressFill"></div>
+                    </div>
+                    <div class="quiz-meta">
+                        <div class="quiz-timer" id="quizTimer">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                            <span id="timerDisplay">30</span>
+                        </div>
+                        <div class="quiz-score-live">
+                            <span class="score-correct" id="liveCorrect">0</span>
+                            <span class="score-divider">/</span>
+                            <span class="score-wrong" id="liveWrong">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quiz-question-card" id="questionCard">
+                    <div class="question-number" id="questionNumber">Câu 1</div>
+                    <h3 class="question-text" id="questionText"></h3>
+                    <div class="options-list" id="optionsList">
+                        <!-- Generated by JS -->
+                    </div>
+                    <div class="question-explanation hidden" id="questionExplanation">
+                        <div class="explanation-header">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                            Giải thích
+                        </div>
+                        <p id="explanationText"></p>
+                    </div>
+                </div>
+
+                <!-- Exam mode controls -->
+                <div class="exam-nav hidden" id="examNav">
+                    <button class="btn btn-outline" id="examPrevBtn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 12H5M12 19l-7-7 7-7"/>
+                        </svg>
+                        Câu trước
+                    </button>
+                    <button class="btn btn-outline" id="examNextBtn">
+                        Câu sau
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="exam-palette-card hidden" id="examPaletteCard">
+                    <div class="exam-palette-header">
+                        <span>Bảng câu hỏi · Đã làm <strong id="examAnsweredCount">0</strong>/<span id="examTotalCount">0</span></span>
+                        <button class="btn btn-primary btn-glow" id="examSubmitBtn">Nộp bài</button>
+                    </div>
+                    <div class="exam-palette" id="examPalette"></div>
+                </div>
+
+                <div class="quiz-actions">
+                    <button class="btn btn-outline hidden" id="nextQuestionBtn">
+                        Câu tiếp theo
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Results -->
+            <div class="quiz-results hidden" id="quizResults">
+                <div class="results-card">
+                    <div class="results-icon" id="resultsIcon">🎉</div>
+                    <h2 class="results-title" id="resultsTitle">Hoàn thành bài thi!</h2>
+                    <div class="results-score-circle">
+                        <svg class="score-ring" viewBox="0 0 120 120">
+                            <circle cx="60" cy="60" r="54" stroke="rgba(255,255,255,0.1)" stroke-width="8" fill="none"/>
+                            <circle cx="60" cy="60" r="54" id="scoreRing" stroke="url(#scoreGradient)" stroke-width="8" fill="none" stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3" transform="rotate(-90 60 60)"/>
+                            <defs>
+                                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#6366f1"/>
+                                    <stop offset="100%" style="stop-color:#06b6d4"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                        <div class="score-text">
+                            <span class="score-percent" id="scorePercent">0</span>
+                            <span class="score-unit">%</span>
+                        </div>
+                    </div>
+                    <div class="results-details">
+                        <div class="result-item result-correct">
+                            <span class="result-dot"></span>
+                            <span>Đúng: <strong id="resultCorrect">0</strong></span>
+                        </div>
+                        <div class="result-item result-wrong">
+                            <span class="result-dot"></span>
+                            <span>Sai: <strong id="resultWrong">0</strong></span>
+                        </div>
+                        <div class="result-item result-time">
+                            <span class="result-dot"></span>
+                            <span>Thời gian: <strong id="resultTime">0</strong></span>
+                        </div>
+                    </div>
+                    <div class="results-actions">
+                        <button class="btn btn-primary btn-glow" id="retryQuizBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="23 4 23 10 17 10"/>
+                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                            </svg>
+                            Làm lại
+                        </button>
+                        <button class="btn btn-outline" id="reviewAnswersBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            Xem đáp án
+                        </button>
+                        <button class="btn btn-outline" id="newTopicBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                            Chủ đề khác
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Review Section -->
+                <div class="review-section hidden" id="reviewSection">
+                    <h3 class="review-title">Xem lại đáp án</h3>
+                    <div class="review-list" id="reviewList">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KNOWLEDGE SECTION -->
+        <section class="section section-knowledge" id="knowledge">
+            <div class="section-header">
+                <h2 class="section-title">Kiến thức <span class="gradient-text">Kế toán</span></h2>
+                <p class="section-desc">Tổng hợp kiến thức kế toán cơ bản và nâng cao</p>
+            </div>
+            <div class="knowledge-grid">
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">📒</div>
+                    <h3>Nguyên lý kế toán</h3>
+                    <ul>
+                        <li>Phương trình kế toán: <strong>Tài sản = Nợ phải trả + Vốn chủ sở hữu</strong></li>
+                        <li>Nguyên tắc ghi sổ kép: Mỗi nghiệp vụ phải ghi ít nhất 2 tài khoản (Nợ - Có)</li>
+                        <li>Tài khoản loại 1, 2 (Tài sản): Tăng bên Nợ, giảm bên Có</li>
+                        <li>Tài khoản loại 3, 4 (Nguồn vốn): Tăng bên Có, giảm bên Nợ</li>
+                        <li>Tài khoản loại 5 (Doanh thu): Tăng bên Có</li>
+                        <li>Tài khoản loại 6 (Chi phí): Tăng bên Nợ</li>
+                    </ul>
+                </div>
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">📊</div>
+                    <h3>Báo cáo tài chính</h3>
+                    <ul>
+                        <li><strong>Bảng cân đối kế toán</strong> (B01-DN): Phản ánh tình hình tài sản và nguồn vốn</li>
+                        <li><strong>Báo cáo KQKD</strong> (B02-DN): Phản ánh doanh thu, chi phí, lợi nhuận</li>
+                        <li><strong>Báo cáo lưu chuyển tiền tệ</strong> (B03-DN): Phản ánh luồng tiền vào ra</li>
+                        <li><strong>Thuyết minh BCTC</strong> (B09-DN): Giải trình chi tiết các khoản mục</li>
+                    </ul>
+                </div>
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">💰</div>
+                    <h3>Thuế GTGT</h3>
+                    <ul>
+                        <li>Thuế suất phổ biến: <strong>0%, 5%, 8%, 10%</strong></li>
+                        <li>Phương pháp khấu trừ: Thuế GTGT phải nộp = Thuế đầu ra - Thuế đầu vào</li>
+                        <li>Phương pháp trực tiếp: Thuế = GTGT × Thuế suất</li>
+                        <li>Kê khai thuế: Theo tháng hoặc theo quý</li>
+                    </ul>
+                </div>
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">🏦</div>
+                    <h3>Hệ thống tài khoản</h3>
+                    <ul>
+                        <li><strong>TK 111</strong>: Tiền mặt</li>
+                        <li><strong>TK 112</strong>: Tiền gửi ngân hàng</li>
+                        <li><strong>TK 131</strong>: Phải thu khách hàng</li>
+                        <li><strong>TK 152</strong>: Nguyên liệu, vật liệu</li>
+                        <li><strong>TK 156</strong>: Hàng hóa</li>
+                        <li><strong>TK 211</strong>: Tài sản cố định hữu hình</li>
+                        <li><strong>TK 331</strong>: Phải trả người bán</li>
+                        <li><strong>TK 511</strong>: Doanh thu bán hàng</li>
+                    </ul>
+                </div>
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">📝</div>
+                    <h3>Chứng từ kế toán</h3>
+                    <ul>
+                        <li><strong>Phiếu thu</strong>: Ghi nhận tiền mặt thu vào</li>
+                        <li><strong>Phiếu chi</strong>: Ghi nhận tiền mặt chi ra</li>
+                        <li><strong>Hóa đơn GTGT</strong>: Chứng từ mua bán hàng hóa, dịch vụ</li>
+                        <li><strong>Phiếu nhập kho</strong>: Ghi nhận hàng hóa nhập kho</li>
+                        <li><strong>Phiếu xuất kho</strong>: Ghi nhận hàng hóa xuất kho</li>
+                    </ul>
+                </div>
+                <div class="knowledge-card">
+                    <div class="knowledge-icon">⚖️</div>
+                    <h3>Khấu hao TSCĐ</h3>
+                    <ul>
+                        <li><strong>Đường thẳng</strong>: Mức KH = Nguyên giá / Thời gian sử dụng</li>
+                        <li><strong>Số dư giảm dần</strong>: Mức KH = Giá trị còn lại × Tỷ lệ KH nhanh</li>
+                        <li><strong>Theo sản lượng</strong>: Mức KH = (Nguyên giá / Tổng SL dự kiến) × SL thực tế</li>
+                        <li>Hạch toán: Nợ TK 627, 641, 642 / Có TK 214</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- STATS SECTION -->
+        <section class="section section-stats" id="stats">
+            <div class="section-header">
+                <h2 class="section-title">Thống kê <span class="gradient-text">học tập</span></h2>
+                <p class="section-desc">Theo dõi quá trình luyện thi của bạn</p>
+            </div>
+            <div class="stats-overview">
+                <div class="stats-card">
+                    <div class="stats-card-icon stats-icon-1">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="stats-card-value" id="totalExams">0</div>
+                    <div class="stats-card-label">Bài thi đã làm</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-icon stats-icon-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                    </div>
+                    <div class="stats-card-value" id="totalCorrectStat">0</div>
+                    <div class="stats-card-label">Câu trả lời đúng</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-icon stats-icon-3">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="stats-card-value" id="avgScore">0%</div>
+                    <div class="stats-card-label">Điểm trung bình</div>
+                </div>
+                <div class="stats-card">
+                    <div class="stats-card-icon stats-icon-4">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="7"/>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                        </svg>
+                    </div>
+                    <div class="stats-card-value" id="bestScore">0%</div>
+                    <div class="stats-card-label">Điểm cao nhất</div>
+                </div>
+            </div>
+
+            <div class="stats-history">
+                <h3 class="stats-history-title">Lịch sử bài thi</h3>
+                <div class="stats-table-wrapper">
+                    <table class="stats-table" id="historyTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Chủ đề</th>
+                                <th>Đúng</th>
+                                <th>Sai</th>
+                                <th>Điểm</th>
+                                <th>Thời gian</th>
+                                <th>Ngày</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody">
+                            <tr class="empty-row">
+                                <td colspan="7">Chưa có bài thi nào. Hãy bắt đầu luyện thi!</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="stats-actions">
+                <button class="btn btn-outline btn-danger" id="clearStatsBtn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                    </svg>
+                    Xóa lịch sử
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Confirm dialog -->
+    <div class="confirm-overlay hidden" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmMessage">
+        <div class="confirm-box">
+            <p class="confirm-message" id="confirmMessage"></p>
+            <div class="confirm-actions">
+                <button class="btn btn-outline" id="confirmCancelBtn">Hủy</button>
+                <button class="btn btn-primary" id="confirmOkBtn">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <footer class="site-footer">
+        © <span id="footerYear"></span> Kế Toán Thái Sơn · Luyện thi trắc nghiệm kế toán &amp; thuế
+    </footer>
+
+    <script src="questions.js"></script>
+    <script src="questions_extra.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "base_url": "https://namlvhbph-svg.github.io/ketoan-thaison",
+  "cong_ty": {
+    "ten": "Kế toán Thái Sơn",
+    "ten_ngan": "Kế toán Thái Sơn",
+    "gioi_thieu": "Chia sẻ kiến thức kế toán, thuế, bảo hiểm cho doanh nghiệp nhỏ và hộ kinh doanh: ngắn gọn, có ví dụ, ghi rõ căn cứ văn bản.",
+    "mo_ta_web": "Kế toán Thái Sơn: kiến thức kế toán, thuế GTGT, TNDN, TNCN, hóa đơn điện tử, BHXH, hộ kinh doanh, báo cáo tài chính; lịch nộp thuế và luyện thi trắc nghiệm kế toán.",
+    "zalo": "0944930793",
+    "zalo_hien": "0944 930 793",
+    "email": "Namlvhbph@gmail.com"
+  },
+  "lich_thue": [
+    ["Tờ khai GTGT, TNCN khai theo tháng", "Ngày 20 của tháng sau"],
+    ["Tờ khai GTGT, TNCN khai theo quý", "Ngày cuối cùng của tháng đầu quý sau"],
+    ["Tạm nộp thuế TNDN theo quý", "Ngày 30 của tháng đầu quý sau"],
+    ["Quyết toán TNDN, TNCN (tổ chức trả thu nhập), báo cáo tài chính năm", "Ngày cuối cùng của tháng thứ 3 sau khi kết thúc năm tài chính"],
+    ["Cá nhân tự quyết toán thuế TNCN", "Ngày cuối cùng của tháng thứ 4 sau khi kết thúc năm"]
+  ],
+  "chuyen_muc": [
+    {"slug": "thue-gtgt", "ten": "Thuế GTGT", "icon": "🧾", "mau": "#1f4e79", "mo_ta": "Phương pháp tính, khấu trừ đầu vào, kê khai tháng / quý, hoàn thuế."},
+    {"slug": "thue-tndn", "ten": "Thuế TNDN", "icon": "🏢", "mau": "#0f766e", "mo_ta": "Thuế suất, chi phí được trừ, tạm nộp quý và quyết toán năm."},
+    {"slug": "thue-tncn", "ten": "Thuế TNCN", "icon": "👤", "mau": "#7b3fa0", "mo_ta": "Giảm trừ gia cảnh, khấu trừ tại nguồn, quyết toán và ủy quyền quyết toán."},
+    {"slug": "hoa-don-dien-tu", "ten": "Hóa đơn điện tử", "icon": "📄", "mau": "#c0261e", "mo_ta": "Thời điểm lập, xử lý hóa đơn sai sót, hóa đơn máy tính tiền."},
+    {"slug": "bhxh-tien-luong", "ten": "BHXH – tiền lương", "icon": "🛡️", "mau": "#b8860b", "mo_ta": "Tỷ lệ đóng bảo hiểm, Luật BHXH 2024, hạch toán tiền lương."},
+    {"slug": "ho-kinh-doanh", "ten": "Hộ kinh doanh", "icon": "🏪", "mau": "#d9631e", "mo_ta": "Chuyển từ thuế khoán sang kê khai, sổ sách theo TT152/2025, thuế của hộ."},
+    {"slug": "so-sach-bctc", "ten": "Sổ sách – BCTC", "icon": "📊", "mau": "#2b5fa8", "mo_ta": "Chế độ kế toán TT99/2025, TT133, hệ thống báo cáo tài chính, thời hạn nộp."},
+    {"slug": "hach-toan", "ten": "Hạch toán nghiệp vụ", "icon": "📒", "mau": "#2e7d4f", "mo_ta": "Định khoản mua bán, khấu hao TSCĐ, kết chuyển cuối kỳ."},
+    {"slug": "quan-ly-thue", "ten": "Quản lý thuế – thủ tục", "icon": "⚖️", "mau": "#475569", "mo_ta": "Thời hạn nộp, tiền chậm nộp, khai bổ sung, lệ phí môn bài."},
+    {"slug": "mau-bieu", "ten": "Mẫu biểu", "icon": "🗂️", "mau": "#0e7490", "mo_ta": "Các tờ khai, bảng kê, cam kết hay dùng: dùng khi nào, lưu ý gì."}
+  ]
+}
