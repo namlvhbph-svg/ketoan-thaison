@@ -198,18 +198,7 @@ const CoVua = (() => {
         ctx.fillStyle = i % 2 ? "#b58863" : "#f0d9b5";
         ctx.fillText(8 - i, o * 0.04, i * o + o * 0.2);
       }
-      ctx.textAlign = "center"; ctx.textBaseline = "middle";
-      ctx.font = `${o * 0.78}px "Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif`;
-      for (let s = 0; s < 64; s++) {
-        const p = st.b[s];
-        if (p === ".") continue;
-        const x = (s & 7) * o + o / 2, y = (s >> 3) * o + o / 2 + o * 0.04, g = KY[p.toLowerCase()] + "︎";
-        ctx.lineWidth = o * 0.05; ctx.strokeStyle = hoa(p) ? "#222" : "#ddd";
-        ctx.strokeText(g, x, y);
-        ctx.fillStyle = hoa(p) ? "#fff" : "#111";
-        ctx.fillText(g, x, y);
-      }
-      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+      for (let s = 0; s < 64; s++) if (st.b[s] !== ".") this.veQuan(ctx, st.b[s], (s & 7) * o + o / 2, (s >> 3) * o + o / 2, o);
       for (const t of ui.dich) {
         ctx.fillStyle = "rgba(20,48,90,.35)";
         ctx.beginPath();
@@ -217,6 +206,17 @@ const CoVua = (() => {
         st.b[t] === "." ? ctx.fill() : (ctx.lineWidth = o * 0.07, ctx.strokeStyle = "rgba(20,48,90,.45)", ctx.stroke());
       }
     },
+    veQuan(ctx, p, x, y, o) {
+      const g = KY[p.toLowerCase()] + "︎";
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.font = `${o * 0.78}px "Segoe UI Symbol","Noto Sans Symbols 2","DejaVu Sans",serif`;
+      ctx.lineWidth = o * 0.05; ctx.strokeStyle = hoa(p) ? "#222" : "#ddd";
+      ctx.strokeText(g, x, y + o * 0.04);
+      ctx.fillStyle = hoa(p) ? "#fff" : "#111";
+      ctx.fillText(g, x, y + o * 0.04);
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+    },
+    o: (W) => W / 8,
     toaDo: (x, y, W) => { const o = W / 8, c = Math.floor(x / o), r = Math.floor(y / o); return ttrong(r, c) ? r * 8 + c : -1; },
     tiLe: 1,
   };
@@ -361,24 +361,26 @@ const CoTuong = (() => {
         ctx.strokeStyle = "#2f7d32"; ctx.lineWidth = o * 0.06;
         ctx.strokeRect(X(s % 9) - o * 0.47, Y(Math.floor(s / 9)) - o * 0.47, o * 0.94, o * 0.94);
       }
-      ctx.font = `bold ${o * 0.5}px "Microsoft YaHei","SimSun","Noto Sans CJK SC",serif`;
-      for (let s = 0; s < 90; s++) {
-        const p = st.b[s];
-        if (p === ".") continue;
-        const x = X(s % 9), y = Y(Math.floor(s / 9)), mau = hoa(p) ? "#c0261e" : "#1b1b1b";
-        ctx.beginPath(); ctx.arc(x, y, o * 0.44, 0, 7);
-        ctx.fillStyle = s === ui.sel ? "#bfe3a8" : "#fbf1dc"; ctx.fill();
-        ctx.lineWidth = o * 0.05; ctx.strokeStyle = mau; ctx.stroke();
-        ctx.beginPath(); ctx.arc(x, y, o * 0.36, 0, 7); ctx.lineWidth = o * 0.02; ctx.stroke();
-        ctx.fillStyle = mau; ctx.fillText(TEN[p], x, y + o * 0.02);
-      }
       ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+      for (let s = 0; s < 90; s++) if (st.b[s] !== ".") this.veQuan(ctx, st.b[s], X(s % 9), Y(Math.floor(s / 9)), o, s === ui.sel);
       for (const t of ui.dich) {
         ctx.beginPath(); ctx.arc(X(t % 9), Y(Math.floor(t / 9)), st.b[t] === "." ? o * 0.13 : o * 0.47, 0, 7);
         if (st.b[t] === ".") { ctx.fillStyle = "rgba(20,48,90,.45)"; ctx.fill(); }
         else { ctx.strokeStyle = "rgba(47,125,50,.9)"; ctx.lineWidth = o * 0.07; ctx.stroke(); }
       }
     },
+    veQuan(ctx, p, x, y, o, chon) {
+      const mau = hoa(p) ? "#c0261e" : "#1b1b1b";
+      ctx.beginPath(); ctx.arc(x, y, o * 0.44, 0, 7);
+      ctx.fillStyle = chon ? "#bfe3a8" : "#fbf1dc"; ctx.fill();
+      ctx.lineWidth = o * 0.05; ctx.strokeStyle = mau; ctx.stroke();
+      ctx.beginPath(); ctx.arc(x, y, o * 0.36, 0, 7); ctx.lineWidth = o * 0.02; ctx.stroke();
+      ctx.font = `bold ${o * 0.5}px "Microsoft YaHei","SimSun","Noto Sans CJK SC",serif`;
+      ctx.textAlign = "center"; ctx.textBaseline = "middle";
+      ctx.fillStyle = mau; ctx.fillText(TEN[p], x, y + o * 0.02);
+      ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+    },
+    o: (W) => W / 9,
     toaDo: (x, y, W) => { const o = W / 9, c = Math.round((x - o / 2) / o), r = Math.round((y - o / 2) / o); return ttrong(r, c) ? r * 9 + c : -1; },
     tiLe: 10 / 9,
   };
@@ -458,6 +460,17 @@ const CoDam = (() => {
       return { thang, chu: (thang === "x" ? "Đỏ" : "Đen") + " thắng!" };
     },
     canhBao: (st) => (legal(st).some((m) => m.bat.length) ? "Bắt buộc ăn quân." : ""),
+    veQuan(ctx, p, x, y, o) {
+      const d = p.toLowerCase() === "x";
+      ctx.beginPath(); ctx.arc(x, y + o * 0.04, o * 0.38, 0, 7); ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, o * 0.38, 0, 7); ctx.fillStyle = d ? "#c0261e" : "#1e1e1e"; ctx.fill();
+      ctx.beginPath(); ctx.arc(x, y, o * 0.27, 0, 7); ctx.strokeStyle = d ? "#ff8a80" : "#666"; ctx.lineWidth = o * 0.04; ctx.stroke();
+      if (p === "X" || p === "O") {
+        ctx.fillStyle = "#f2c94c"; ctx.font = `bold ${o * 0.36}px sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+        ctx.fillText("♛︎", x, y + o * 0.02); ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
+      }
+    },
+    o: (W) => W / 8,
     ve(ctx, W, H, st, ui) {
       const o = W / 8;
       for (let s = 0; s < 64; s++) {
@@ -467,18 +480,7 @@ const CoDam = (() => {
         if (s === ui.sel) ctx.fillStyle = "#c9d96b";
         ctx.fillRect(c * o, r * o, o, o);
       }
-      for (let s = 0; s < 64; s++) {
-        const p = st.b[s];
-        if (p === ".") continue;
-        const x = (s & 7) * o + o / 2, y = (s >> 3) * o + o / 2, d = p.toLowerCase() === "x";
-        ctx.beginPath(); ctx.arc(x, y + o * 0.04, o * 0.38, 0, 7); ctx.fillStyle = "rgba(0,0,0,.35)"; ctx.fill();
-        ctx.beginPath(); ctx.arc(x, y, o * 0.38, 0, 7); ctx.fillStyle = d ? "#c0261e" : "#1e1e1e"; ctx.fill();
-        ctx.beginPath(); ctx.arc(x, y, o * 0.27, 0, 7); ctx.strokeStyle = d ? "#ff8a80" : "#666"; ctx.lineWidth = o * 0.04; ctx.stroke();
-        if (p === "X" || p === "O") {
-          ctx.fillStyle = "#f2c94c"; ctx.font = `bold ${o * 0.36}px sans-serif`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-          ctx.fillText("♛︎", x, y + o * 0.02); ctx.textAlign = "start"; ctx.textBaseline = "alphabetic";
-        }
-      }
+      for (let s = 0; s < 64; s++) if (st.b[s] !== ".") this.veQuan(ctx, st.b[s], (s & 7) * o + o / 2, (s >> 3) * o + o / 2, o);
       for (const t of ui.dich) {
         ctx.beginPath(); ctx.arc((t & 7) * o + o / 2, (t >> 3) * o + o / 2, o * 0.14, 0, 7);
         ctx.fillStyle = "rgba(255,255,255,.75)"; ctx.fill();
@@ -616,7 +618,10 @@ const CoCaro = (() => {
   function ve() {
     const [w, h] = kichThuoc();
     ctx.clearRect(0, 0, w, h);
-    G.ve(ctx, w, h, st, Object.assign({ ket }, ui));
+    if (keo && keo.dang) {                              // quân đang kéo: vẽ bàn không có quân đó, rồi vẽ quân theo con trỏ
+      G.ve(ctx, w, h, Object.assign({}, st, { b: st.b.map((p, i) => (i === keo.f ? "." : p)) }), Object.assign({ ket }, ui));
+      G.veQuan(ctx, st.b[keo.f], keo.x, keo.y, G.o(w) * 1.08, true);
+    } else G.ve(ctx, w, h, st, Object.assign({ ket }, ui));
     let chu;
     if (ket) chu = ket.chu + (cheDo() === "1" && !ket.hoa ? (ket.thang === G.ben[0] ? " Bạn thắng máy." : " Máy thắng.") : "");
     else if (ban) chu = "Máy đang nghĩ…";
@@ -651,23 +656,56 @@ const CoCaro = (() => {
     });
   }
 
-  cv.addEventListener("click", (e) => {
-    if (ban || ket || !luotNguoi() || !$("phong-cap").hidden) return;
-    const r = cv.getBoundingClientRect(), s = G.toaDo(e.clientX - r.left, e.clientY - r.top, r.width, r.height);
+  /* Điều khiển bằng chuột hoặc ngón tay: bấm quân rồi bấm ô đích, hoặc kéo quân thả vào ô đích. */
+  let keo = null;                                       // {f, x, y, x0, y0, dang}
+  const viTri = (e) => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top, r.width]; };
+  const choPhep = () => !(ban || ket || !luotNguoi() || !$("phong-cap").hidden);
+
+  function diToi(f, s) {                               // trả về true nếu đã đi
+    const ds = G.legal(st).filter((m) => m.f === f && m.t === s);
+    if (!ds.length) return false;
+    if (ds[0].promo) chonPhong(ds);
+    else di(ds.reduce((a, b) => ((b.bat || []).length > (a.bat || []).length ? b : a)));
+    return true;
+  }
+  function chon(s) {
+    const ms = G.legal(st).filter((m) => m.f === s);
+    if (ms.length) { ui.sel = s; ui.dich = [...new Set(ms.map((m) => m.t))]; return true; }
+    ui.sel = -1; ui.dich = [];
+    return false;
+  }
+
+  cv.addEventListener("pointerdown", (e) => {
+    if (!choPhep() || e.button > 0) return;
+    const [x, y, W] = viTri(e), s = G.toaDo(x, y, W);
     if (s < 0) return;
+    e.preventDefault();
     if (G.datQuan) { if (st.b[s] === ".") di({ t: s }); return; }
-    const ms = G.legal(st);
-    if (ui.sel >= 0) {
-      const ds = ms.filter((m) => m.f === ui.sel && m.t === s);
-      if (ds.length) {
-        if (ds[0].promo) return chonPhong(ds);
-        return di(ds.reduce((a, b) => ((b.bat || []).length > (a.bat || []).length ? b : a)));
-      }
-    }
-    if (ms.some((m) => m.f === s)) { ui.sel = s; ui.dich = [...new Set(ms.filter((m) => m.f === s).map((m) => m.t))]; }
-    else { ui.sel = -1; ui.dich = []; }
+    if (ui.sel >= 0 && ui.sel !== s && diToi(ui.sel, s)) return;
+    const daChon = ui.sel === s;
+    const coQuan = chon(s);
+    if (coQuan) { keo = { f: s, x, y, x0: x, y0: y, dang: false, daChon }; cv.setPointerCapture(e.pointerId); }
     ve();
+    if (!coQuan) $("trang-thai").textContent = "Hãy chọn quân của bạn (" + G.tenBen[st.t] + ") còn nước đi được.";
   });
+  cv.addEventListener("pointermove", (e) => {
+    if (!keo) return;
+    const [x, y] = viTri(e);
+    keo.x = x; keo.y = y;
+    if (!keo.dang && Math.hypot(x - keo.x0, y - keo.y0) > 6) keo.dang = true;
+    if (keo.dang) ve();
+  });
+  function thaKeo(e, huy) {
+    if (!keo) return;
+    const k = keo; keo = null;
+    if (!huy && k.dang) {                                // kéo thả: đi nếu ô thả hợp lệ, không thì quân về chỗ cũ, vẫn chọn
+      const [x, y, W] = viTri(e), s = G.toaDo(x, y, W);
+      if (s >= 0 && s !== k.f && diToi(k.f, s)) return;
+    } else if (!huy && k.daChon) { ui.sel = -1; ui.dich = []; }   // bấm lại quân đang chọn: bỏ chọn
+    ve();
+  }
+  cv.addEventListener("pointerup", (e) => thaKeo(e, false));
+  cv.addEventListener("pointercancel", (e) => thaKeo(e, true));
 
   $("van-moi").onclick = () => { if (!ban) vanMoi(); };
   $("di-lai").onclick = () => {
