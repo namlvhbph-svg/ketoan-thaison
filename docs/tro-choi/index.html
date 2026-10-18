@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chơi cờ | Kế toán Thái Sơn</title>
+<meta name="description" content="Chơi cờ tướng, cờ vua, cờ caro, cờ đam miễn phí trên trình duyệt: đấu với máy 3 mức hoặc hai người.">
+<link rel="icon" href="../tai-nguyen/icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../tai-nguyen/style.css">
+<style>
+  .dau-co{padding:26px 0 8px}
+  .dau-co h1{font-size:clamp(26px,3.6vw,36px);font-weight:800}
+  .dau-co p{color:var(--muted)}
+  .tab-co{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 12px}
+  .tab-co button{font:600 15px var(--f);padding:9px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+  .tab-co button[aria-selected="true"]{background:#1d3f73;border-color:#1d3f73;color:#fff}
+  .khu-co{display:grid;grid-template-columns:minmax(0,620px) minmax(220px,1fr);gap:24px;align-items:start;padding-bottom:20px}
+  .ban-wrap{position:relative;width:100%}
+  #ban{display:block;border-radius:10px;box-shadow:var(--shadow);touch-action:manipulation;cursor:pointer}
+  .bang-dk{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;gap:12px}
+  .bang-dk label{display:grid;gap:4px;font-size:14px;font-weight:600}
+  .bang-dk select{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+  .hang-nut{display:flex;gap:8px}
+  .hang-nut button{flex:1;font:700 14px var(--f);padding:10px;border-radius:9px;border:0;cursor:pointer;background:var(--chip);color:var(--ink)}
+  .hang-nut button.chinh{background:#c0261e;color:#fff}
+  #trang-thai{font-weight:700;font-size:15px;min-height:2.6em;color:var(--brand)}
+  #trang-thai.xong{color:var(--accent)}
+  #ben-nguoi{font-size:13.5px;color:var(--muted)}
+  .luat{font-size:13.5px;color:var(--muted);border-top:1px solid var(--rule);padding-top:10px}
+  #phong-cap{position:absolute;inset:0;display:grid;place-items:center;background:rgba(0,0,0,.35);border-radius:10px}
+  #phong-cap[hidden]{display:none}
+  #phong-cap div{background:var(--paper);padding:16px;border-radius:12px;display:grid;gap:10px;text-align:center}
+  #phong-cap button{font:600 15px var(--f);padding:8px 14px;margin:0 3px;border-radius:8px;border:1.5px solid var(--line);background:var(--chip);color:var(--ink);cursor:pointer}
+  @media (max-width:900px){.khu-co{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap nav">
+  <a class="logo" href="../index.html"><i>TS</i><span>Kế toán Thái Sơn</span></a>
+  <nav aria-label="Liên kết"><a href="../index.html">Trang chủ</a><a href="../kien-thuc.html">Kiến thức</a><a href="../trac-nghiem/index.html">Trắc nghiệm</a></nav>
+  <a class="tim-nut" href="../kien-thuc.html">Bài viết</a>
+</div></header>
+<main class="wrap">
+  <section class="dau-co">
+    <h1>Chơi cờ</h1>
+    <p>Thư giãn giữa giờ làm sổ sách: cờ tướng, cờ vua, cờ caro, cờ đam. Đấu với máy hoặc hai người cùng chơi.</p>
+    <div class="tab-co" role="tablist">
+      <button data-g="tuong" role="tab">Cờ tướng</button>
+      <button data-g="vua" role="tab">Cờ vua</button>
+      <button data-g="caro" role="tab">Cờ caro</button>
+      <button data-g="dam" role="tab">Cờ đam</button>
+    </div>
+  </section>
+  <div class="khu-co">
+    <div class="ban-wrap">
+      <canvas id="ban" aria-label="Bàn cờ"></canvas>
+      <div id="phong-cap" hidden><div><b>Phong tốt thành</b><p>
+        <button data-p="q">Hậu ♛&#xFE0E;</button><button data-p="r">Xe ♜&#xFE0E;</button><button data-p="b">Tượng ♝&#xFE0E;</button><button data-p="n">Mã ♞&#xFE0E;</button></p></div></div>
+    </div>
+    <aside class="bang-dk">
+      <div id="trang-thai" role="status" aria-live="polite"></div>
+      <div id="ben-nguoi"></div>
+      <label>Chế độ
+        <select id="che-do"><option value="1">Chơi với máy</option><option value="2">Hai người</option></select></label>
+      <label>Mức của máy
+        <select id="muc"><option value="1">Dễ</option><option value="2" selected>Vừa</option><option value="3">Khó</option></select></label>
+      <div class="hang-nut"><button id="van-moi" class="chinh">Ván mới</button><button id="di-lai">Đi lại</button></div>
+      <p class="luat">Bấm quân của mình, chấm tròn là ô đi được, bấm ô để đi. Cờ caro: bấm ô trống, 5 quân liền nhau (ngang, dọc, chéo) là thắng. Cờ đam: đi chéo, bắt buộc ăn, ăn liên tiếp, tới hàng cuối được phong vua.</p>
+    </aside>
+  </div>
+</main>
+<footer><div class="wrap ban-quyen" style="padding-top:20px">© Kế toán Thái Sơn · <a href="../index.html">Dịch vụ kế toán thuế</a> · <a href="../kien-thuc.html">Kiến thức kế toán</a></div></footer>
+<script src="co.js"></script>
+</body>
+</html>

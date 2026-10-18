@@ -111,6 +111,7 @@ def build() -> None:
     RA.mkdir(exist_ok=True)
     shutil.copytree(GOC / "trac_nghiem_goc", RA / "trac-nghiem")     # trang luyện thi trắc nghiệm có sẵn của Thái Sơn
     shutil.copytree(GOC / "giao_dien", RA / "tai-nguyen", dirs_exist_ok=True)
+    shutil.copytree(GOC / "tro_choi_goc", RA / "tro-choi")         # chơi cờ: tướng, vua, caro, đam
     (RA / ".nojekyll").write_text("", encoding="utf-8")
     moi = sorted(bai, key=lambda b: (b["date"], b["title"]), reverse=True)
 
@@ -162,7 +163,7 @@ def build() -> None:
   <h1>Kiến thức <em>kế toán – thuế</em> viết dễ hiểu, cập nhật theo văn bản mới</h1>
   <p class="dan">{esc(CT['gioi_thieu'])}</p>
   <form class="o-tim" action="tim-kiem.html" role="search"><input name="q" type="search" placeholder="Tìm bài viết: thuế GTGT, quyết toán TNCN, hóa đơn sai sót…" aria-label="Tìm bài viết"><button>Tìm</button></form>
-  <div class="the-nhanh"><a href="trac-nghiem/index.html">Luyện thi trắc nghiệm</a><a href="#lich-thue">Lịch nộp thuế</a><a href="chuyen-muc/index.html">Tất cả chuyên mục</a></div></div>
+  <div class="the-nhanh"><a href="trac-nghiem/index.html">Luyện thi trắc nghiệm</a><a href="tro-choi/index.html">Chơi cờ</a><a href="#lich-thue">Lịch nộp thuế</a><a href="chuyen-muc/index.html">Tất cả chuyên mục</a></div></div>
   <aside class="o-lich" id="lich-thue"><b>Lịch kê khai, nộp thuế thường gặp</b><table>{lich}</table><p>Ngày hạn rơi vào ngày nghỉ thì chuyển sang ngày làm việc tiếp theo.</p></aside>
 </section>
 <section><h2 class="tieu-de-muc">Chuyên mục</h2><div class="luoi-cm">{the_cm.replace("{g}", "")}</div></section>
@@ -184,7 +185,7 @@ def build() -> None:
     (RA / "404.html").write_text(khung("Không tìm thấy trang", "Trang không tồn tại",
         f'<h1 class="tieu-de-trang">Không tìm thấy trang</h1><p>Trang đã đổi địa chỉ hoặc không tồn tại. <a href="{BASE or "."}/index.html">Về trang chủ</a>.</p>', goc=(BASE + "/") if BASE else ""), encoding="utf-8")
     if BASE:
-        urls = ["", "kien-thuc.html", "chuyen-muc/index.html"] + [f"chuyen-muc/{c['slug']}.html" for c in CH["chuyen_muc"]] + [f"bai-viet/{b['slug']}.html" for b in bai]
+        urls = ["", "kien-thuc.html", "chuyen-muc/index.html", "tro-choi/index.html"] + [f"chuyen-muc/{c['slug']}.html" for c in CH["chuyen_muc"]] + [f"bai-viet/{b['slug']}.html" for b in bai]
         (RA / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
             + "".join(f"  <url><loc>{BASE}/{u}</loc></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
         (RA / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
