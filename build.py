@@ -78,13 +78,13 @@ def khung(tieu_de: str, mo_ta: str, than: str, sau: str = "", goc: str = "", can
 <body>
 <header class="top"><div class="wrap nav">
   <a class="logo" href="{goc}index.html"><i>TS</i><span>{esc(CT['ten_ngan'])}</span></a>
-  <nav aria-label="Chuyên mục">{nav}<a href="{goc}chuyen-muc/index.html">Tất cả</a></nav>
+  <nav aria-label="Chuyên mục"><a href="{goc}kien-thuc.html">Kiến thức</a>{nav}<a href="{goc}chuyen-muc/index.html">Tất cả</a></nav>
   <a class="tim-nut" href="{goc}tim-kiem.html" aria-label="Tìm kiếm">Tìm kiếm</a>
 </div></header>
 <main class="wrap">{than}</main>
 <footer><div class="wrap chan">
   <div><b>{esc(CT['ten'])}</b><p>{esc(CT['gioi_thieu'])}</p></div>
-  <div><b>Liên hệ</b><p>Zalo: <a href="https://zalo.me/{CT['zalo']}">{esc(CT['zalo_hien'])}</a><br>Email: <a href="mailto:{CT['email'].lower()}">{esc(CT['email'])}</a></p></div>
+  <div><b>Liên hệ</b><p>Điện thoại: <a href="tel:{CT['zalo']}">{esc(CT['dien_thoai'])}</a><br>Zalo: <a href="https://zalo.me/{CT['zalo']}">{esc(CT['zalo_hien'])}</a><br>Email: <a href="mailto:{CT['email'].lower()}">{esc(CT['email'])}</a></p></div>
   <div><b>Lưu ý</b><p>Bài viết mang tính tham khảo, cập nhật theo văn bản đến ngày ghi trên bài. Đối chiếu văn bản gốc trước khi áp dụng.</p></div>
 </div><div class="wrap ban-quyen">© {date.today().year} {esc(CT['ten'])}</div></footer>
 {sau}
@@ -122,7 +122,7 @@ def build() -> None:
         toc_h = ("<nav class='muc-luc'><b>Nội dung</b><ul>" + "".join(f'<li><a href="#{i}">{esc(t)}</a></li>' for i, t in toc) + "</ul></nav>") if len(toc) > 2 else ""
         can = ("<div class='can-cu'><b>Căn cứ</b><ul>" + "".join(f"<li>{esc(c)}</li>" for c in b.get("can_cu", [])) + "</ul></div>") if b.get("can_cu") else ""
         than = f"""
-<nav class="duong-dan"><a href="../index.html">Trang chủ</a> › <a href="../chuyen-muc/{b['chuyen_muc']['slug']}.html">{esc(b['chuyen_muc']['ten'])}</a></nav>
+<nav class="duong-dan"><a href="../index.html">Trang chủ</a> › <a href="../kien-thuc.html">Kiến thức</a> › <a href="../chuyen-muc/{b['chuyen_muc']['slug']}.html">{esc(b['chuyen_muc']['ten'])}</a></nav>
 <article class="bai">
   <header><span class="cm" style="--c:{b['chuyen_muc']['mau']}">{esc(b['chuyen_muc']['ten'])}</span>
   <h1>{esc(b['title'])}</h1><p class="tom-tat">{esc(b['summary'])}</p>
@@ -140,7 +140,7 @@ def build() -> None:
     (RA / "chuyen-muc").mkdir()
     for cm in CH["chuyen_muc"]:
         ds = [b for b in moi if b["chuyen_muc"] is cm]
-        than = f"""<nav class="duong-dan"><a href="../index.html">Trang chủ</a> › <a href="index.html">Chuyên mục</a></nav>
+        than = f"""<nav class="duong-dan"><a href="../index.html">Trang chủ</a> › <a href="../kien-thuc.html">Kiến thức</a> › <a href="index.html">Chuyên mục</a></nav>
 <section class="dau-cm" style="--c:{cm['mau']}"><span class="bieu-tuong">{cm['icon']}</span><div><h1>{esc(cm['ten'])}</h1><p>{esc(cm['mo_ta'])}</p><p class="dem">{len(ds)} bài viết</p></div></section>
 <div class="luoi-bai">{''.join(the_bai(b, '../') for b in ds) or '<p class="trong">Chuyên mục đang cập nhật bài viết.</p>'}</div>"""
         (RA / "chuyen-muc" / f"{cm['slug']}.html").write_text(
@@ -150,10 +150,11 @@ def build() -> None:
         f'<b>{esc(cm["ten"])}</b><span>{esc(cm["mo_ta"])}</span><em>{sum(1 for b in bai if b["chuyen_muc"] is cm)} bài</em></a>' for cm in CH["chuyen_muc"])
     (RA / "chuyen-muc" / "index.html").write_text(khung(
         f"Chuyên mục kế toán – thuế | {CT['ten_ngan']}", "Tất cả chuyên mục kiến thức kế toán, thuế, bảo hiểm của " + CT["ten_ngan"],
-        f'<nav class="duong-dan"><a href="../index.html">Trang chủ</a></nav><h1 class="tieu-de-trang">Chuyên mục</h1><div class="luoi-cm">{the_cm.replace("{g}", "../")}</div>',
+        f'<nav class="duong-dan"><a href="../index.html">Trang chủ</a> › <a href="../kien-thuc.html">Kiến thức</a></nav><h1 class="tieu-de-trang">Chuyên mục</h1><div class="luoi-cm">{the_cm.replace("{g}", "../")}</div>',
         goc="../", canonical="chuyen-muc/index.html"), encoding="utf-8")
 
-    # ---------- trang chủ
+    # ---------- trang chủ: trang giới thiệu dịch vụ của Thái Sơn (trang_chu_goc), kiến thức ở kien-thuc.html
+    shutil.copy(GOC / "trang_chu_goc" / "index.html", RA / "index.html")
     lich = "".join(f"<tr><td>{esc(a)}</td><td>{esc(b)}</td></tr>" for a, b in CH["lich_thue"])
     than = f"""
 <section class="hero">
@@ -169,7 +170,7 @@ def build() -> None:
 <p class="xem-them"><a href="chuyen-muc/index.html">Xem tất cả {len(bai)} bài theo chuyên mục →</a></p></section>
 <section class="dai-lien-he"><div><h2>Cần hỗ trợ kế toán, thuế?</h2><p>Nhắn {esc(CT['ten_ngan'])} để được tư vấn trường hợp cụ thể của doanh nghiệp, hộ kinh doanh.</p></div>
 <a class="nut" href="https://zalo.me/{CT['zalo']}">Nhắn Zalo {esc(CT['zalo_hien'])}</a></section>"""
-    (RA / "index.html").write_text(khung(f"{CT['ten']} – Kiến thức kế toán, thuế", CT["mo_ta_web"], than, canonical=""), encoding="utf-8")
+    (RA / "kien-thuc.html").write_text(khung(f"{CT['ten']} – Kiến thức kế toán, thuế", CT["mo_ta_web"], than, canonical="kien-thuc.html"), encoding="utf-8")
 
     # ---------- tìm kiếm
     tk = [{"t": b["title"], "s": b["summary"], "c": b["chuyen_muc"]["ten"], "u": f"bai-viet/{b['slug']}.html",
@@ -183,7 +184,7 @@ def build() -> None:
     (RA / "404.html").write_text(khung("Không tìm thấy trang", "Trang không tồn tại",
         f'<h1 class="tieu-de-trang">Không tìm thấy trang</h1><p>Trang đã đổi địa chỉ hoặc không tồn tại. <a href="{BASE or "."}/index.html">Về trang chủ</a>.</p>', goc=(BASE + "/") if BASE else ""), encoding="utf-8")
     if BASE:
-        urls = [""] + ["chuyen-muc/index.html"] + [f"chuyen-muc/{c['slug']}.html" for c in CH["chuyen_muc"]] + [f"bai-viet/{b['slug']}.html" for b in bai]
+        urls = ["", "kien-thuc.html", "chuyen-muc/index.html"] + [f"chuyen-muc/{c['slug']}.html" for c in CH["chuyen_muc"]] + [f"bai-viet/{b['slug']}.html" for b in bai]
         (RA / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
             + "".join(f"  <url><loc>{BASE}/{u}</loc></url>\n" for u in urls) + "</urlset>\n", encoding="utf-8")
         (RA / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {BASE}/sitemap.xml\n", encoding="utf-8")
