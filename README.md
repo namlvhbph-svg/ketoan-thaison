@@ -6,7 +6,7 @@ Trang web: https://namlvhbph-svg.github.io/ketoan-thaison/
 - `cau_hinh.json`: tên công ty, liên hệ, chuyên mục, lịch thuế.
 - `giao_dien/`: CSS, JS, biểu tượng.
 - `trac_nghiem_goc/`: trang luyện thi trắc nghiệm.
-- `build.py`: dựng trang tĩnh vào `docs/` (GitHub Pages phục vụ thư mục này).
+- `build.py`: dựng kiến thức (bài viết, chuyên mục, tìm kiếm) vào `site/kien-thuc` của trang Hoàng Nam = www.hoangnamsoft.com/kien-thuc (`cau_hinh.json > hoang_nam`), và `docs/` cho GitHub Pages Thái Sơn: trang chủ dịch vụ, trắc nghiệm, chơi cờ; trang kiến thức cũ chuyển hướng sang hoangnamsoft.
 
 ## Đăng bài mới, sửa bài
 
@@ -14,7 +14,7 @@ Bấm đúp **DANG_BAI.cmd** (công cụ `dang_bai.py`):
 
 1. **+ Bài mới**, hoặc bấm vào một bài trong danh sách bên trái để sửa.
 2. Chọn chuyên mục, gõ tiêu đề, tóm tắt, căn cứ (mỗi dòng 1 văn bản), nội dung. Các nút trên ô nội dung chèn mục, chữ đậm, danh sách, bảng, ảnh.
-3. **Lưu** → **Xem thử trên máy** → **Đăng lên web** (tự dựng trang và đưa lên GitHub; khoảng 1 phút sau trang cập nhật).
+3. **Lưu** → **Xem thử trên máy** → **Đăng lên web** (tự dựng trang, đưa lên www.hoangnamsoft.com bằng wrangler - cần đã `npx wrangler login` trên máy - rồi đẩy trang Thái Sơn lên GitHub).
 
 ## Cập nhật văn bản mới, soạn bài
 

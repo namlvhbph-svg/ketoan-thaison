@@ -2,8 +2,9 @@
 
     python dang_bai.py      (hoặc bấm đúp DANG_BAI.cmd)
 
-Viết bài trong cửa sổ, bấm "Lưu", "Xem thử" để mở bài trên máy, "Đăng lên web" để dựng trang
-và đưa lên GitHub. Bài lưu vào noi_dung/<chuyên mục>.md theo đúng định dạng build.py đọc.
+Viết bài trong cửa sổ, bấm "Lưu", "Xem thử" để mở bài trên máy, "Đăng lên web" để dựng trang,
+đưa kiến thức lên www.hoangnamsoft.com/kien-thuc (Cloudflare, wrangler) và trang Thái Sơn lên GitHub
+(trang chủ dịch vụ, trắc nghiệm, chơi cờ + chuyển hướng bài cũ). Bài lưu vào noi_dung/<chuyên mục>.md theo đúng định dạng build.py đọc.
 """
 from __future__ import annotations
 
@@ -27,7 +28,9 @@ import cap_nhat_van_ban as vb
 GOC = Path(__file__).resolve().parent
 CH = json.loads((GOC / "cau_hinh.json").read_text(encoding="utf-8"))
 CM = CH["chuyen_muc"]
-THU_MUC_ANH = GOC / "giao_dien" / "anh"          # build.py chép giao_dien -> docs/tai-nguyen
+THU_MUC_ANH = GOC / "giao_dien" / "anh"          # build.py chép giao_dien -> kien-thuc/tai-nguyen
+WEB_HN = Path(CH["hoang_nam"]["thu_muc_web"])     # trang Hoàng Nam (wrangler.jsonc) ; kiến thức ở site/kien-thuc
+URL_HN = CH["hoang_nam"]["base_url"].rstrip("/")
 
 
 def tao_slug(s: str) -> str:
@@ -350,9 +353,9 @@ class App(tk.Tk):
         self.bao("Đã xóa trên máy. Bấm 'Đăng lên web' để cập nhật trang.")
 
     # ---------- dựng, đăng
-    def chay(self, lenh: list[str]) -> tuple[int, str]:
+    def chay(self, lenh: list[str], cwd: Path = GOC) -> tuple[int, str]:
         env = dict(os.environ, PYTHONIOENCODING="utf-8")
-        p = subprocess.run(lenh, cwd=GOC, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
+        p = subprocess.run(lenh, cwd=cwd, capture_output=True, text=True, encoding="utf-8", errors="replace", env=env,
                            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
         return p.returncode, (p.stdout + p.stderr).strip()
 
@@ -369,7 +372,7 @@ class App(tk.Tk):
 
         def lam():
             if self.dung():
-                trang = GOC / "docs" / ("bai-viet/" + self.dang_sua[1] + ".html" if self.dang_sua else "kien-thuc.html")
+                trang = WEB_HN / "site" / "kien-thuc" / ("bai-viet/" + self.dang_sua[1] + ".html" if self.dang_sua else "index.html")
                 webbrowser.open(trang.as_uri())
                 self.goi(lambda: self.bao("Đã mở bản xem thử trên máy (chưa đăng lên web)."))
         threading.Thread(target=lam, daemon=True).start()
@@ -377,27 +380,29 @@ class App(tk.Tk):
     def dang(self) -> None:
         if self.thay_doi and not self.luu():
             return
-        if not messagebox.askyesno("Đăng lên web", "Đưa tất cả bài đã lưu lên trang web Thái Sơn?"):
+        if not messagebox.askyesno("Đăng lên web", "Đưa tất cả bài đã lưu lên www.hoangnamsoft.com/kien-thuc?"):
             return
-        self.bao("Đang dựng trang và đưa lên GitHub…")
+        self.bao("Đang dựng trang và đưa lên www.hoangnamsoft.com…")
 
         def lam():
             if not self.dung():
                 return
-            self.chay(["git", "add", "-A"])
-            ma, ra = self.chay(["git", "commit", "-m", f"Cap nhat bai viet {date.today():%d/%m/%Y}"])
-            if ma and "nothing to commit" in ra:
-                self.goi(lambda: self.bao("Không có gì mới để đăng."))
-                return
-            ma, ra = self.chay(["git", "push"])
+            ma, ra = self.chay(["cmd", "/c", "npx", "--yes", "wrangler@4", "deploy"], cwd=WEB_HN)
             if ma:
-                self.goi(lambda: messagebox.showerror("Đăng chưa được", "Chưa đưa lên GitHub được (kiểm tra mạng, đăng nhập GitHub):\n\n" + ra[-1500:]))
+                self.goi(lambda: messagebox.showerror("Đăng chưa được", "Chưa đưa lên www.hoangnamsoft.com được (kiểm tra mạng, đăng nhập Cloudflare: npx wrangler login):\n\n" + ra[-1500:]))
                 self.goi(lambda: self.bao("Đã lưu trên máy nhưng CHƯA lên web."))
                 return
-            url = CH.get("base_url", "")
-            dia_chi = f"{url}/bai-viet/{self.dang_sua[1]}.html" if self.dang_sua else f"{url}/kien-thuc.html"
-            self.goi(lambda: self.bao(f"Đã đăng. Trang cập nhật sau khoảng 1 phút: {dia_chi}"))
-            self.goi(lambda: messagebox.showinfo("Đã đăng", f"Đã đưa lên web. Khoảng 1 phút sau trang sẽ cập nhật:\n{dia_chi}"))
+            # trang Thái Sơn trên GitHub: chuyển hướng bài mới / bài đổi tên sang hoangnamsoft
+            self.chay(["git", "add", "-A"])
+            ma, ra = self.chay(["git", "commit", "-m", f"Cap nhat bai viet {date.today():%d/%m/%Y}"])
+            gh = ""
+            if not (ma and "nothing to commit" in ra):
+                ma, ra = self.chay(["git", "push"])
+                if ma:
+                    gh = "\n\n(Chưa đẩy được trang Thái Sơn lên GitHub - bài vẫn đã lên hoangnamsoft. Đăng lại khi có mạng / đăng nhập GitHub.)"
+            dia_chi = f"{URL_HN}/bai-viet/{self.dang_sua[1]}" if self.dang_sua else f"{URL_HN}/"
+            self.goi(lambda: self.bao(f"Đã đăng: {dia_chi}"))
+            self.goi(lambda: messagebox.showinfo("Đã đăng", f"Đã đưa lên web:\n{dia_chi}" + gh))
         threading.Thread(target=lam, daemon=True).start()
 
     def bao(self, s: str) -> None:
