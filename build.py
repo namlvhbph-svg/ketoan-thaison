@@ -121,6 +121,7 @@ def khung(tieu_de: str, mo_ta: str, than: str, sau: str = "", goc: str = "", can
   <div><b>Lưu ý</b><p>Bài viết mang tính tham khảo, cập nhật theo văn bản đến ngày ghi trên bài. Đối chiếu văn bản gốc trước khi áp dụng.</p></div>
 </div><div class="wrap ban-quyen">© {date.today().year} {esc(HN['ten'])} · nội dung kiến thức © {esc(CT['ten'])}</div></footer>
 {sau}
+<script src="/tro-ly.js?v=20261028" defer></script>
 </body>
 </html>
 """
